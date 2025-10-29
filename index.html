@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Математичний Калькулятор</title>
+    <style>
+        /* --- Базові стилі --- */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* --- Контейнер калькулятора --- */
+        .calculator-container {
+            width: 100%;
+            max-width: 500px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        /* --- Заголовок --- */
+        header {
+            background-color: #007bff;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        header h1 {
+            margin: 0;
+            font-size: 1.5em;
+        }
+
+        /* --- Секції завдань --- */
+        .task-section {
+            padding: 25px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .task-section:last-child {
+            border-bottom: none;
+        }
+
+        .task-section h2 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: #0056b3;
+            font-size: 1.2em;
+        }
+
+        /* --- Форми (інпути та кнопки) --- */
+        .form-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .form-group input[type="number"] {
+            flex: 1; /* Займає доступне місце */
+            padding: 10px;
+            font-size: 1em;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+        
+        /* Прибирає стрілки в полях типу number */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+
+        button {
+            padding: 10px 15px;
+            font-size: 1em;
+            font-weight: 600;
+            color: white;
+            background-color: #28a745;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        /* --- Зона результату --- */
+        .result-box {
+            font-size: 1.1em;
+            font-weight: 600;
+            padding: 12px;
+            background-color: #e9f5fe;
+            border: 1px solid #bce8f1;
+            border-radius: 6px;
+            color: #31708f;
+            min-height: 24px; /* Щоб не "стрибало" при появі тексту */
+            word-wrap: break-word; /* Для переносу довгих чисел */
+        }
+
+        .result-box .label {
+            font-weight: normal;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="calculator-container">
+        <header>
+            <h1>Математичний Калькулятор</h1>
+        </header>
+
+        <section class="task-section">
+            <h2>Завдання 7: Зворотний елемент (a⁻¹)</h2>
+            <div class="form-group">
+                <input type="number" id="inv_a" placeholder="Число a">
+                <input type="number" id="inv_p" placeholder="Модуль p">
+            </div>
+            <button onclick="calculateInverse()">Знайти a⁻¹ (mod p)</button>
+            <div id="inverse_result" class="result-box" style="margin-top: 15px;">
+                <span class="label">Результат:</span> 
+            </div>
+        </section>
+
+        <section class="task-section">
+            <h2>Завдання 5: Функція Ейлера (Φ)</h2>
+            <div class="form-group">
+                <input type="number" id="euler_n" placeholder="Число n">
+            </div>
+            <button onclick="calculateEulerPhi()">Обчислити Φ(n)</button>
+            <div id="euler_result" class="result-box" style="margin-top: 15px;">
+                <span class="label">Результат:</span> 
+            </div>
+        </section>
+
+        <section class="task-section">
+            <h2>Завдання 3: Алгоритм Евкліда (НСД)</h2>
+            <div class="form-group">
+                <input type="number" id="gcd_a" placeholder="Число a">
+                <input type="number" id="gcd_b" placeholder="Число b">
+            </div>
+            <button onclick="calculateGCD()">Визначити НСД</button>
+            <div id="gcd_result" class="result-box" style="margin-top: 15px;">
+                <span class="label">Результат:</span> 
+            </div>
+        </section>
+
+        <section class="task-section">
+            <h2>Завдання 1.1: Перевірка простоти (Тест Ферма)</h2>
+            <div class="form-group">
+                <input type="number" id="fermat_n" placeholder="Число n">
+            </div>
+            <button onclick="checkFermatPrime()">Перевірити</button>
+            <div id="fermat_result" class="result-box" style="margin-top: 15px;">
+                <span class="label">Результат:</span> 
+            </div>
+        </section>
+
+        <section class="task-section">
+            <h2>Завдання 1.2: Генерація простого числа</h2>
+            <div class="form-group">
+                <input type="number" id="prime_a" placeholder="Верхня границя A">
+            </div>
+            <button onclick="generatePrime()">Генерувати (p ≤ A)</button>
+            <div id="prime_result" class="result-box" style="margin-top: 15px;">
+                <span class="label">Результат:</span> 
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // === ЛОГІКА КАЛЬКУЛЯТОРА ===
+
+        // --- Допоміжні функції: парсинг вхідних даних ---
+        // Використовуємо BigInt для всіх криптографічних розрахунків
+        function parseBigIntInput(id) {
+            const value = document.getElementById(id).value;
+            if (value === "") return null;
+            try {
+                return BigInt(value);
+            } catch (e) {
+                return null; // Якщо введено не число
+            }
+        }
+        
+        function parseIntInput(id) {
+            const value = document.getElementById(id).value;
+            if (value === "") return null;
+            const num = parseInt(value, 10);
+            return isNaN(num) || num < 0 ? null : num;
+        }
+
+        // --- 1. Алгоритм Евкліда (НСД) (для Завдань 3 та 7) ---
+        // (a, b) - BigInts
+        function gcd(a, b) {
+            while (b) {
+                a, b = b, a % b;
+            }
+            return a;
+        }
+
+        // --- 2. Модулярне піднесення до степеня (для Завдань 1.1 та 7) ---
+        // (a, n, mod) - BigInts
+        function power(a, n, mod) {
+            let res = 1n;
+            a = a % mod;
+            while (n > 0n) {
+                if (n % 2n === 1n) {
+                    res = (res * a) % mod;
+                }
+                a = (a * a) % mod;
+                n = n / 2n;
+            }
+            return res;
+        }
+
+        // --- 3. Функція Ейлера (для Завдань 5 та 7) ---
+        // (n) - BigInt
+        // Оновлена версія, що працює з BigInt
+        function eulerPhi_big(n) {
+            let result = n;
+            
+            // Починаємо з 2n
+            for (let i = 2n; i * i <= n; i++) {
+                if (n % i === 0n) {
+                    // result = result * (1 - 1/i) -> result = result - result/i
+                    result -= result / i; // BigInt division
+                    
+                    while (n % i === 0n) {
+                        n = n / i; // BigInt division
+                    }
+                }
+            }
+            
+            // Якщо n > 1n, це останній простий дільник
+            if (n > 1n) {
+                result -= result / n;
+            }
+            
+            return result; // returns a BigInt
+        }
+
+        // --- ОБРОБНИКИ КНОПОК ---
+
+        // --- Завдання 7: Зворотний елемент (НОВЕ) ---
+        function calculateInverse() {
+            const a_in = parseBigIntInput('inv_a');
+            const p = parseBigIntInput('inv_p');
+            const resultBox = document.getElementById('inverse_result');
+
+            if (a_in === null || p === null) {
+                resultBox.innerHTML = '<span class="label">Помилка:</span> Введіть і "a", і "p".';
+                return;
+            }
+            
+            if (p <= 1n) {
+                resultBox.innerHTML = '<span class="label">Помилка:</span> Модуль "p" має бути > 1.';
+                return;
+            }
+
+            const a = a_in % p; // Приводимо 'a' по модулю p
+
+            if (a === 0n) {
+                resultBox.innerHTML = `<span class="label">Результат:</span> Зворотний до 0 не існує.`;
+                return;
+            }
+
+            // 1. Перевірка на взаємну простоту
+            const common_divisor = gcd(a, p);
+            if (common_divisor !== 1n) {
+                resultBox.innerHTML = `<span class="label">Результат:</span> Зворотний не існує. НСД(${a}, ${p}) = ${common_divisor}.`;
+                return;
+            }
+
+            // 2. Обчислюємо Φ(p)
+            const phi = eulerPhi_big(p);
+            
+            // 3. Обчислюємо степінь: Φ(p) - 1
+            const exponent = phi - 1n;
+
+            // 4. Обчислюємо a^(Φ(p)-1) mod p
+            const inverse = power(a, exponent, p);
+
+            resultBox.innerHTML = `<span class="label">${a}^-1 (mod ${p}) =</span> ${inverse}`;
+        }
+
+
+        // --- Завдання 5: Функція Ейлера (ОНОВЛЕНО) ---
+        function calculateEulerPhi() {
+            const n = parseBigIntInput('euler_n'); // Змінено на BigInt
+            const resultBox = document.getElementById('euler_result');
+            
+            if (n === null || n <= 0n) { // Змінено на BigInt
+                resultBox.innerHTML = '<span class="label">Помилка:</span> Введіть ціле додатне число.';
+                return;
+            }
+
+            const result = eulerPhi_big(n); // Використовуємо нову функцію
+            resultBox.innerHTML = `<span class="label">Φ(${n}) =</span> ${result}`;
+        }
+
+        // --- Завдання 3: Алгоритм Евкліда (НСД) ---
+        function calculateGCD() {
+            const a = parseBigIntInput('gcd_a');
+            const b = parseBigIntInput('gcd_b');
+            const resultBox = document.getElementById('gcd_result');
+
+            if (a === null || b === null || a < 0n || b < 0n) {
+                resultBox.innerHTML = '<span class="label">Помилка:</span> Введіть два додатні числа.';
+                return;
+            }
+            
+            const result = gcd(a, b);
+            resultBox.innerHTML = `<span class="label">НСД(${a}, ${b}) =</span> ${result}`;
+        }
+
+        // --- Завдання 1.1: Тест Ферма ---
+        function randomBigInt(min, max) {
+            const range = max - min + 1n;
+            const bits = range.toString(2).length;
+            let num;
+            do {
+                let randBits = '';
+                for(let i = 0; i < bits; i++) {
+                    randBits += Math.random() < 0.5 ? '0' : '1';
+                }
+                num = BigInt('0b' + randBits);
+            } while (num > range - 1n);
+            return num + min;
+        }
+
+        function isPrimeFermat(n, k = 5) {
+            if (n <= 1n) return 'ні (≤ 1)';
+            if (n === 2n || n === 3n) return 'просте';
+            if (n % 2n === 0n) return 'ні (парне)';
+
+            for (let i = 0; i < k; i++) {
+                const a = randomBigInt(2n, n - 2n);
+                if (power(a, n - 1n, n) !== 1n) {
+                    return 'ні (складене)';
+                }
+            }
+            return 'просте (ймовірно)';
+        }
+
+        function checkFermatPrime() {
+            const n = parseBigIntInput('fermat_n');
+            const resultBox = document.getElementById('fermat_n_result');
+            
+            if (n === null || n < 0n) {
+                resultBox.innerHTML = '<span class="label">Помилка:</span> Введіть додатне число.';
+                return;
+            }
+
+            const result = isPrimeFermat(n);
+            resultBox.innerHTML = `<span class="label">Число ${n}</span>: ${result}`;
+        }
+
+        // --- Завдання 1.2: Генерація простого ---
+        function _is_prime_deterministic(n) {
+            if (n <= 1) return false;
+            if (n <= 3) return true;
+            if (n % 2 === 0 || n % 3 === 0) return false;
+            let i = 5;
+            while (i * i <= n) {
+                if (n % i === 0 || n % (i + 2) === 0) {
+                    return false;
+                }
+                i += 6;
+            }
+            return true;
+        }
+        
+        function generatePrime() {
+            const A = parseIntInput('prime_a');
+            const resultBox = document.getElementById('prime_result');
+
+            if (A === null || A < 2) {
+                resultBox.innerHTML = `<span class="label">Результат:</span> Простих чисел ≤ ${A} не існує.`;
+                return;
+            }
+            
+            const searchLimit = Math.max(0, A - 1000); 
+            
+            for (let num = A; num >= searchLimit; num--) {
+                if (_is_prime_deterministic(num)) {
+                    resultBox.innerHTML = `<span class="label">Найбільше просте число ≤ ${A}:</span> ${num}`;
+                    return;
+                }
+            }
+            
+            if (A > 1000 && searchLimit > 0) {
+                 resultBox.innerHTML = `<span class="label">Результат:</span> Не знайдено в діапазоні [${searchLimit}, ${A}]. Спробуйте меншу границю.`;
+            } else {
+                 resultBox.innerHTML = `<span class="label">Результат:</span> Не знайдено (перевірено до ${searchLimit}).`;
+            }
+        }
+    </script>
+</body>
+</html>
