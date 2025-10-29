@@ -277,7 +277,7 @@
                 return;
             }
 
-            const common_divisor = gcd(a, p);
+            const common_divisor = gcd(a_in, p);
             if (common_divisor !== 1n) {
                 resultBox.innerHTML = `<span class="label">Результат:</span> Зворотний не існує. НСД(${a}, ${p}) = ${common_divisor}.`;
                 return;
@@ -285,9 +285,9 @@
 
             const phi = eulerPhi_big(p);
             const exponent = phi - 1n;
-            const inverse = power(a, exponent, p);
+            const inverse = power(a_in, exponent, p);
 
-            resultBox.innerHTML = `<span class="label">${a}^-1 (mod ${p}) =</span> ${inverse}`;
+            resultBox.innerHTML = `<span class="label">${a_in}^-1 (mod ${p}) =</span> ${inverse}`;
         }
 
 
