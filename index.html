@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Математичний Калькулятор</title>
+    <title>Математичний Калькулятор (Виправлено)</title>
     <style>
         /* --- Базові стилі --- */
         body {
@@ -122,7 +122,7 @@
 
     <div class="calculator-container">
         <header>
-            <h1>Математичний Калькулятор</h1>
+            <h1>Математичний Калькулятор (Виправлено)</h1>
         </header>
 
         <section class="task-section">
@@ -187,14 +187,13 @@
         // === ЛОГІКА КАЛЬКУЛЯТОРА ===
 
         // --- Допоміжні функції: парсинг вхідних даних ---
-        // Використовуємо BigInt для всіх криптографічних розрахунків
         function parseBigIntInput(id) {
             const value = document.getElementById(id).value;
             if (value === "") return null;
             try {
                 return BigInt(value);
             } catch (e) {
-                return null; // Якщо введено не число
+                return null;
             }
         }
         
@@ -205,16 +204,19 @@
             return isNaN(num) || num < 0 ? null : num;
         }
 
-        // --- 1. Алгоритм Евкліда (НСД) (для Завдань 3 та 7) ---
+        // --- 1. Алгоритм Евкліда (НСД) (ВИПРАВЛЕНО) ---
         // (a, b) - BigInts
         function gcd(a, b) {
+            // Використовуємо стандартний синтаксис JavaScript
             while (b) {
-                a, b = b, a % b;
+                let temp = b;
+                b = a % b;
+                a = temp;
             }
             return a;
         }
 
-        // --- 2. Модулярне піднесення до степеня (для Завдань 1.1 та 7) ---
+        // --- 2. Модулярне піднесення до степеня ---
         // (a, n, mod) - BigInts
         function power(a, n, mod) {
             let res = 1n;
@@ -229,35 +231,30 @@
             return res;
         }
 
-        // --- 3. Функція Ейлера (для Завдань 5 та 7) ---
+        // --- 3. Функція Ейлера ---
         // (n) - BigInt
-        // Оновлена версія, що працює з BigInt
         function eulerPhi_big(n) {
             let result = n;
             
-            // Починаємо з 2n
             for (let i = 2n; i * i <= n; i++) {
                 if (n % i === 0n) {
-                    // result = result * (1 - 1/i) -> result = result - result/i
-                    result -= result / i; // BigInt division
-                    
+                    result -= result / i;
                     while (n % i === 0n) {
-                        n = n / i; // BigInt division
+                        n = n / i;
                     }
                 }
             }
             
-            // Якщо n > 1n, це останній простий дільник
             if (n > 1n) {
                 result -= result / n;
             }
             
-            return result; // returns a BigInt
+            return result;
         }
 
         // --- ОБРОБНИКИ КНОПОК ---
 
-        // --- Завдання 7: Зворотний елемент (НОВЕ) ---
+        // --- Завдання 7: Зворотний елемент ---
         function calculateInverse() {
             const a_in = parseBigIntInput('inv_a');
             const p = parseBigIntInput('inv_p');
@@ -273,44 +270,38 @@
                 return;
             }
 
-            const a = a_in % p; // Приводимо 'a' по модулю p
+            const a = (a_in % p + p) % p; // Обробка від'ємних 'a'
 
             if (a === 0n) {
                 resultBox.innerHTML = `<span class="label">Результат:</span> Зворотний до 0 не існує.`;
                 return;
             }
 
-            // 1. Перевірка на взаємну простоту
             const common_divisor = gcd(a, p);
             if (common_divisor !== 1n) {
                 resultBox.innerHTML = `<span class="label">Результат:</span> Зворотний не існує. НСД(${a}, ${p}) = ${common_divisor}.`;
                 return;
             }
 
-            // 2. Обчислюємо Φ(p)
             const phi = eulerPhi_big(p);
-            
-            // 3. Обчислюємо степінь: Φ(p) - 1
             const exponent = phi - 1n;
-
-            // 4. Обчислюємо a^(Φ(p)-1) mod p
             const inverse = power(a, exponent, p);
 
             resultBox.innerHTML = `<span class="label">${a}^-1 (mod ${p}) =</span> ${inverse}`;
         }
 
 
-        // --- Завдання 5: Функція Ейлера (ОНОВЛЕНО) ---
+        // --- Завдання 5: Функція Ейлера ---
         function calculateEulerPhi() {
-            const n = parseBigIntInput('euler_n'); // Змінено на BigInt
+            const n = parseBigIntInput('euler_n');
             const resultBox = document.getElementById('euler_result');
             
-            if (n === null || n <= 0n) { // Змінено на BigInt
+            if (n === null || n <= 0n) {
                 resultBox.innerHTML = '<span class="label">Помилка:</span> Введіть ціле додатне число.';
                 return;
             }
 
-            const result = eulerPhi_big(n); // Використовуємо нову функцію
+            const result = eulerPhi_big(n);
             resultBox.innerHTML = `<span class="label">Φ(${n}) =</span> ${result}`;
         }
 
@@ -320,16 +311,20 @@
             const b = parseBigIntInput('gcd_b');
             const resultBox = document.getElementById('gcd_result');
 
-            if (a === null || b === null || a < 0n || b < 0n) {
-                resultBox.innerHTML = '<span class="label">Помилка:</span> Введіть два додатні числа.';
+            if (a === null || b === null) {
+                resultBox.innerHTML = '<span class="label">Помилка:</span> Введіть два числа.';
                 return;
             }
             
-            const result = gcd(a, b);
+            // Беремо модуль, щоб працювати з додатними
+            const a_pos = a < 0n ? -a : a;
+            const b_pos = b < 0n ? -b : b;
+            
+            const result = gcd(a_pos, b_pos);
             resultBox.innerHTML = `<span class="label">НСД(${a}, ${b}) =</span> ${result}`;
         }
 
-        // --- Завдання 1.1: Тест Ферма ---
+        // --- Завдання 1.1: Тест Ферма (ВИПРАВЛЕНО) ---
         function randomBigInt(min, max) {
             const range = max - min + 1n;
             const bits = range.toString(2).length;
@@ -359,8 +354,9 @@
         }
 
         function checkFermatPrime() {
+            // ВИПРАВЛЕНО: 'fermat_result' замість 'fermat_n_result'
+            const resultBox = document.getElementById('fermat_result'); 
             const n = parseBigIntInput('fermat_n');
-            const resultBox = document.getElementById('fermat_n_result');
             
             if (n === null || n < 0n) {
                 resultBox.innerHTML = '<span class="label">Помилка:</span> Введіть додатне число.';
